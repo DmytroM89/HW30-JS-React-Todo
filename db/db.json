@@ -1,0 +1,24 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "name": "buy milk",
+      "done": true
+    },
+    {
+      "name": "buy bread",
+      "done": false,
+      "id": 2
+    },
+    {
+      "name": "buy sugar",
+      "done": true,
+      "id": 3
+    },
+    {
+      "name": "buy beer",
+      "done": false,
+      "id": 4
+    }
+  ]
+}
