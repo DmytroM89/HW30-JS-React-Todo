@@ -1,43 +1,54 @@
 import React, {useEffect, useState} from 'react';
-import axios from 'axios';
 import { Container } from "@mui/material";
 
 import './ToDo.scss';
 import ToDoForm from "./ToDoForm/ToDoForm";
 import ToDoList from "./ToDoList/ToDoList";
+import {createTodoApi, deleteTodoApi, getTodos, updateTodoApi} from "./todoApi";
 
 function ToDo() {
     const [todos, setTodos] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:3001/todos')
-            .then(resp => {
-                setTodos(resp.data)
-            })
+        async function initTodos() {
+            const todos = await getTodos();
+            setTodos(todos);
+        }
+
+        initTodos();
     }, [])
 
-    function changeStatus(id) {
-        const todoIdx = todos.findIndex((todo) => todo.id === id);
-        axios.patch(`http://localhost:3001/todos/${id}`, {done: !todos[todoIdx].done})
-            .then(resp => {
-                todos[todoIdx].done = resp.data.done;
-                setTodos([...todos]);
-            })
+    async function changeStatus(id) {
+        try {
+            const allTodos = [...todos];
+            const todo = allTodos.find((item) => item.id === id);
+            todo.done = !todo.done;
+
+            await updateTodoApi(id, todo);
+            setTodos(allTodos);
+        } catch (e) {
+            console.warn(e);
+        }
     }
 
-    function deleteTodo(id) {
-        axios.delete(`http://localhost:3001/todos/${id}`)
-            .then(() => {
-                const newTodos = todos.filter((todo) => todo.id !== id);
-                setTodos(newTodos);
-            })
+    async function deleteTodo(id) {
+        try {
+            await deleteTodoApi(id);
+
+            const newTodos = todos.filter((todo) => todo.id !== id);
+            setTodos(newTodos);
+        } catch (e) {
+            console.warn(e);
+        }
     }
 
-    function addTodo(todo) {
-        axios.post('http://localhost:3001/todos', { ...todo })
-            .then(resp => {
-                setTodos([...todos, { ...resp.data }]);
-            })
+    async function addTodo(todo) {
+        try {
+            const newTodo = await createTodoApi(todo);
+            setTodos([...todos, newTodo]);
+        } catch(e) {
+            console.warn(e);
+        }
     }
 
     return (

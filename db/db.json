@@ -12,7 +12,7 @@
     },
     {
       "name": "buy sugar",
-      "done": true,
+      "done": false,
       "id": 3
     },
     {
